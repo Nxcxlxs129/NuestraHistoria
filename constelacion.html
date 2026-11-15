@@ -1142,25 +1142,45 @@
     renderSky();
 
     /* =====================================================================
-        4. REPRODUCTOR DUAL (INICIO EN SEGUNDO 3)
+        4. REPRODUCTOR DUAL (AUTO-INICIO EN SEGUNDO 20 + CONTINUIDAD)
         ===================================================================== */
     const playlist = [
-        { title: "Perfect — Ed Sheeran", src: "audio/perfect.mp3", startAt: 17 },
+        { title: "Perfect — Ed Sheeran", src: "audio/perfect.mp3", startAt: 20 },
         { title: "Te Amo y Más — Libro de la Vida", src: "audio/te-amo-mas.mp3", startAt: 0 }
     ];
 
-    let currentTrack = 0;
+    let currentTrack = Number(sessionStorage.getItem("nh_track") || 0);
+    let savedTime = Number(sessionStorage.getItem("nh_time") || 0);
     let isPlaying = false;
     let loadedTrackIndex = -1;
+
     const bgAudio = document.getElementById("bgAudio");
     const audioToggle = document.getElementById("audioToggle");
     const songSwitchBtn = document.getElementById("songSwitchBtn");
     const audioIcon = document.getElementById("audioIcon");
     const songTitleLabel = document.getElementById("songTitleLabel");
 
+    songTitleLabel.textContent = playlist[currentTrack].title;
+
+    // Evita que al repetirse en bucle vuelva a pasar por los 20s vacíos
+    bgAudio.addEventListener("timeupdate", () => {
+        const track = playlist[currentTrack];
+        if (track && track.startAt > 0 && bgAudio.currentTime < track.startAt - 0.5) {
+            bgAudio.currentTime = track.startAt;
+        }
+        if (isPlaying) {
+            sessionStorage.setItem("nh_track", String(currentTrack));
+            sessionStorage.setItem("nh_time", String(bgAudio.currentTime));
+        }
+    });
+
     function startMusic(forceRestart = false) {
         const track = playlist[currentTrack];
-        const targetTime = track.startAt || 0;
+        const minStart = track.startAt || 0;
+        const targetTime = forceRestart
+            ? minStart
+            : Math.max(minStart, savedTime || bgAudio.currentTime || 0);
+
         songTitleLabel.textContent = track.title;
 
         if (loadedTrackIndex !== currentTrack) {
@@ -1172,21 +1192,28 @@
         }
 
         const playNow = () => {
+            savedTime = 0;
             bgAudio.play()
                 .then(() => {
                     isPlaying = true;
                     audioIcon.textContent = "✨";
                 })
                 .catch(() => {
+                    // Si el navegador del celular exige un toque, arranca al tocar cualquier estrella
                     isPlaying = false;
                     audioIcon.textContent = "🎵";
+                    const resumeOnTouch = () => {
+                        if (!isPlaying) startMusic(false);
+                    };
+                    window.addEventListener("pointerdown", resumeOnTouch, { once: true });
+                    window.addEventListener("keydown", resumeOnTouch, { once: true });
                 });
         };
 
-        if ((forceRestart || bgAudio.currentTime < targetTime) && targetTime > 0) {
+        if (targetTime > 0 && Math.abs(bgAudio.currentTime - targetTime) > 0.6) {
             const setOffset = () => {
-                bgAudio.currentTime = targetTime;
                 bgAudio.addEventListener("seeked", playNow, { once: true });
+                bgAudio.currentTime = targetTime;
             };
             if (bgAudio.readyState >= 1) setOffset();
             else bgAudio.addEventListener("loadedmetadata", setOffset, { once: true });
@@ -1195,7 +1222,8 @@
         }
     }
 
-    audioToggle.addEventListener("click", () => {
+    audioToggle.addEventListener("click", (e) => {
+        e.stopPropagation();
         if (!isPlaying) {
             startMusic(false);
         } else {
@@ -1205,11 +1233,16 @@
         }
     });
 
-    songSwitchBtn.addEventListener("click", () => {
+    songSwitchBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
         currentTrack = (currentTrack + 1) % playlist.length;
+        savedTime = 0;
         songTitleLabel.textContent = playlist[currentTrack].title;
         if (isPlaying) startMusic(true);
     });
+
+    // Inicia automáticamente al entrar a las constelaciones
+    startMusic(false);
 </script>
 </body>
 </html>

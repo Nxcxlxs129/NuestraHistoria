@@ -2715,6 +2715,12 @@
         reader.readAsDataURL(file);
         photoPicker.value = "";
     });
+    document.querySelectorAll('a[href="constelacion.html"]').forEach((link) => {
+        link.addEventListener("click", () => {
+            sessionStorage.setItem("nh_track", String(currentTrack));
+            sessionStorage.setItem("nh_time", String(bgAudio.currentTime || 20));
+        });
+    });
 </script>
 </body>
 </html>
