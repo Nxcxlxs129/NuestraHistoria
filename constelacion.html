@@ -3,1147 +3,643 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Constelación del Corazón | 10 Cosas que Amo de Ti</title>
-
+    <title>Nuestra Constelación | Daniela & Nicolás</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-            href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
-            rel="stylesheet"
-    />
-
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Plus+Jakarta+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
     <style>
         :root {
-            --bg-deep: #030407;
-            --accent: #e8c27a;
-            --accent-bright: #f8d794;
-            --cyan-soft: #7ee8df;
-            --text-main: #f4f5f8;
-            --text-muted: #aeb6c8;
-            --glass-bg: rgba(11, 14, 21, 0.64);
-            --glass-border: rgba(255, 255, 255, 0.14);
+            --bg-deep: #04060c;
+            --accent-gold: #e8c27a;
+            --accent-bright: #f8e2b4;
+            --text-main: #f4f1ea;
+            --text-muted: #b5b0a6;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        html,
         body {
-            width: 100%;
-            height: 100%;
-            background: #030407;
+            background: radial-gradient(circle at 50% 45%, #0e1426 0%, #04060c 78%);
             color: var(--text-main);
             font-family: "Plus Jakarta Sans", sans-serif;
+            min-height: 100vh;
             overflow: hidden;
             user-select: none;
         }
 
-        /* ================= CANVAS DE CIELO ABIERTO + PLANETA ECLIPSE 3D GIRATORIO ================= */
-        #universe-canvas {
-            position: fixed;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            cursor: default;
-        }
+        #skyCanvas { position: fixed; inset: 0; width: 100%; height: 100%; cursor: pointer; }
 
-        /* ================= BARRA SUPERIOR MINIMALISTA ================= */
         .top-bar {
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 30;
+            top: 14px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 50;
+            width: min(94%, 760px);
             display: flex;
+            align-items: center;
             justify-content: space-between;
-            align-items: center;
             gap: 10px;
-            padding: 13px 24px;
-            background: linear-gradient(180deg, rgba(4, 5, 9, 0.85) 0%, transparent 100%);
-            pointer-events: none;
+            padding: 9px 15px;
+            border-radius: 999px;
+            background: rgba(11, 14, 23, 0.78);
+            border: 1px solid rgba(232, 194, 122, 0.28);
+            backdrop-filter: blur(14px);
         }
 
-        .top-bar > * {
-            pointer-events: auto;
-        }
+        .audio-controls { display: flex; align-items: center; gap: 8px; min-width: 0; }
 
-        .back-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 7px 14px;
-            border-radius: 10px;
-            background: rgba(12, 15, 23, 0.72);
-            border: 1px solid rgba(232, 194, 122, 0.36);
+        .pill-btn {
+            background: rgba(232, 194, 122, 0.12);
+            border: 1px solid rgba(232, 194, 122, 0.34);
             color: var(--accent-bright);
-            text-decoration: none;
-            font-size: 0.8rem;
-            font-weight: 600;
-            backdrop-filter: blur(12px);
-            transition: all 0.25s ease;
-        }
-
-        .back-btn:hover {
-            background: rgba(232, 194, 122, 0.16);
-            transform: translateX(-2px);
-        }
-
-        .center-sky-title {
-            text-align: center;
-        }
-
-        .center-sky-title span {
-            display: block;
-            font-size: 0.65rem;
-            letter-spacing: 0.26em;
-            text-transform: uppercase;
-            color: var(--accent);
-            opacity: 0.9;
-        }
-
-        .center-sky-title h1 {
-            font-family: "Cinzel", serif;
-            font-size: clamp(0.95rem, 2vw, 1.35rem);
-            font-weight: 600;
-            letter-spacing: 0.08em;
-            color: #ffffff;
-            text-shadow: 0 2px 14px rgba(0, 0, 0, 0.9);
-        }
-
-        .music-controls {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .audio-btn {
-            background: rgba(12, 15, 23, 0.72);
-            border: 1px solid var(--glass-border);
-            color: var(--text-main);
-            padding: 7px 12px;
-            border-radius: 10px;
-            font-size: 0.76rem;
+            border-radius: 999px;
+            padding: 6px 13px;
+            font-size: 0.82rem;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            transition: all 0.25s ease;
-            backdrop-filter: blur(12px);
-        }
-
-        .audio-btn:hover {
-            border-color: var(--accent);
-            background: rgba(232, 194, 122, 0.16);
-        }
-
-        .song-pill {
-            max-width: 155px;
-            overflow: hidden;
-            text-overflow: ellipsis;
             white-space: nowrap;
+            text-decoration: none;
+            transition: background 0.25s ease;
         }
 
-        /* ================= PANEL TELEMETRÍA ASTRONÓMICA (ESQUINA SUPERIOR IZQ) ================= */
-        .astro-hud {
+        .pill-btn:hover { background: rgba(232, 194, 122, 0.25); }
+        .song-label { font-size: 0.8rem; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 185px; }
+
+        .sky-header {
             position: fixed;
             top: 68px;
-            left: 24px;
+            left: 50%;
+            transform: translateX(-50%);
             z-index: 20;
-            width: 225px;
-            padding: 13px 15px;
-            border-radius: 14px;
-            background: rgba(11, 14, 21, 0.56);
-            border: 1px solid rgba(255, 255, 255, 0.11);
-            backdrop-filter: blur(12px);
-            font-size: 0.72rem;
-            line-height: 1.5;
-            color: var(--text-muted);
+            text-align: center;
+            width: min(92%, 600px);
             pointer-events: none;
         }
 
-        .astro-hud strong {
-            display: block;
+        .sky-header h1 { font-family: "Cinzel", serif; font-size: clamp(1.25rem, 3.4vw, 1.95rem); color: var(--accent-bright); letter-spacing: 0.08em; margin-bottom: 3px; }
+        .sky-header p { font-family: "Cormorant Garamond", serif; font-style: italic; font-size: 1.05rem; color: var(--text-muted); }
+        .star-counter { display: inline-block; margin-top: 5px; font-size: 0.75rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent-gold); }
+
+        .reopen-envelope-btn {
+            display: none;
+            margin-top: 8px;
+            pointer-events: auto;
+            background: linear-gradient(135deg, rgba(232, 194, 122, 0.25), rgba(200, 155, 75, 0.2));
+            border: 1px solid rgba(232, 194, 122, 0.55);
             color: var(--accent-bright);
-            font-weight: 600;
-            margin-bottom: 2px;
-        }
-
-        .astro-hud .divider {
-            height: 1px;
-            background: rgba(255, 255, 255, 0.08);
-            margin: 7px 0;
-        }
-
-        /* ================= TARJETA FLOTANTE DISCRETA (ESQUINA INFERIOR IZQ) ================= */
-        .floating-star-hud {
-            position: fixed;
-            bottom: 22px;
-            left: 24px;
-            z-index: 25;
-            width: min(440px, calc(100vw - 48px));
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            padding: 16px 18px;
-            backdrop-filter: blur(16px);
-            box-shadow:
-                    inset 0 1px 0 rgba(255, 255, 255, 0.1),
-                    0 20px 50px rgba(0, 0, 0, 0.72);
-            transition: all 0.35s ease;
-        }
-
-        .hud-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 8px;
-        }
-
-        .hud-title {
-            font-family: "Cinzel", serif;
-            font-size: 0.78rem;
-            font-weight: 700;
-            letter-spacing: 0.14em;
-            text-transform: uppercase;
-            color: var(--accent-bright);
-        }
-
-        .hud-right-tools {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .hud-counter {
-            font-size: 0.68rem;
-            color: var(--cyan-soft);
-            opacity: 0.9;
-        }
-
-        .hud-minimize-btn {
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.14);
-            color: var(--text-main);
-            width: 24px;
-            height: 24px;
-            border-radius: 6px;
-            font-size: 0.8rem;
+            border-radius: 999px;
+            padding: 5px 14px;
+            font-size: 0.76rem;
+            letter-spacing: 0.08em;
             cursor: pointer;
-            display: inline-flex;
+        }
+        .reopen-envelope-btn.show { display: inline-flex; align-items: center; gap: 6px; }
+
+        .memory-card {
+            position: fixed;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            z-index: 40;
+            width: min(92%, 520px);
+            background: rgba(12, 16, 26, 0.88);
+            border: 1px solid rgba(232, 194, 122, 0.35);
+            border-radius: 18px;
+            padding: 16px 22px;
+            text-align: center;
+            backdrop-filter: blur(16px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+
+        .memory-card.active { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+        .memory-tag { font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent-gold); margin-bottom: 4px; display: block; }
+        .memory-title { font-family: "Cinzel", serif; font-size: 1.15rem; color: #ffffff; margin-bottom: 6px; }
+        .memory-text { font-family: "Cormorant Garamond", serif; font-style: italic; font-size: 1.15rem; line-height: 1.5; color: var(--text-main); }
+
+        /* ================= SOBRE DELICADO DONDE PREDOMINA LA CARTA ================= */
+        .envelope-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 95;
+            background: rgba(4, 6, 12, 0.82);
+            backdrop-filter: blur(14px);
+            display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s ease;
+            padding: 20px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
         }
 
-        .hud-minimize-btn:hover {
-            border-color: var(--accent);
-            color: var(--accent-bright);
-        }
+        .envelope-overlay.open { opacity: 1; visibility: visible; }
 
-        .floating-star-hud.minimized .hud-body {
-            display: none;
-        }
-
-        .floating-star-hud.minimized {
-            width: auto;
-            padding: 11px 15px;
-        }
-
-        .star-quote {
-            font-family: "Cormorant Garamond", serif;
-            font-style: italic;
-            font-size: clamp(1.12rem, 1.9vw, 1.32rem);
-            line-height: 1.48;
-            color: #f6ebd4;
-            margin-bottom: 12px;
-        }
-
-        .hud-controls {
+        .envelope-scene {
+            position: relative;
+            width: min(94vw, 520px);
+            height: 430px;
+            perspective: 1100px;
+            transform: scale(0.45);
+            opacity: 0;
+            transition: transform 0.75s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.55s ease;
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            gap: 6px;
-            flex-wrap: wrap;
+            justify-content: center;
         }
 
-        .hud-btn-group {
-            display: flex;
-            gap: 6px;
+        .envelope-overlay.open .envelope-scene {
+            transform: scale(1);
+            opacity: 1;
         }
 
-        .ctrl-btn {
-            padding: 6px 12px;
-            border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.14);
-            background: rgba(255, 255, 255, 0.04);
-            color: var(--text-main);
-            font-size: 0.74rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .ctrl-btn:hover {
-            background: rgba(232, 194, 122, 0.16);
-            border-color: var(--accent);
-        }
-
-        .ctrl-btn.primary {
-            background: linear-gradient(135deg, #f3d08a, #cfa04b);
-            color: #111319;
-            border: none;
-        }
-
-        /* ================= LEYENDA SUTIL INFERIOR DERECHA ================= */
-        .sky-hint {
-            position: fixed;
-            bottom: 22px;
-            right: 24px;
-            z-index: 20;
-            font-size: 0.72rem;
-            color: var(--text-muted);
-            background: rgba(11, 14, 21, 0.52);
-            border: 1px solid rgba(255, 255, 255, 0.09);
-            padding: 8px 13px;
-            border-radius: 10px;
-            backdrop-filter: blur(10px);
+        .envelope-shell {
+            position: absolute;
+            bottom: 8px;
+            width: 78%;
+            height: 150px;
+            border-radius: 14px;
+            background: linear-gradient(165deg, rgba(24, 30, 48, 0.72), rgba(11, 14, 24, 0.85));
+            border: 1px solid rgba(232, 194, 122, 0.32);
+            box-shadow: 0 20px 55px rgba(0, 0, 0, 0.75);
+            transition: opacity 0.7s ease, transform 0.7s ease;
             pointer-events: none;
         }
 
-        @media (max-width: 768px) {
-            .astro-hud,
-            .sky-hint {
-                display: none;
-            }
+        .envelope-pocket {
+            position: absolute;
+            inset: 0;
+            z-index: 4;
+            border-radius: 14px;
+            overflow: hidden;
+        }
 
-            .top-bar {
-                padding: 10px 14px;
-            }
+        .envelope-pocket::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(232, 194, 122, 0.12), rgba(13, 17, 29, 0.92));
+            clip-path: polygon(0 0, 50% 58%, 100% 0, 100% 100%, 0 100%);
+        }
 
-            .song-pill {
-                max-width: 95px;
-            }
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 62%;
+            z-index: 5;
+            transform-origin: top center;
+            transform: rotateX(0deg);
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
-            .floating-star-hud {
-                left: 14px;
-                right: 14px;
-                bottom: 14px;
-                width: auto;
-                padding: 14px 15px;
-            }
+        .envelope-flap::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(35, 44, 70, 0.92), rgba(18, 23, 38, 0.95));
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+            border-top: 1px solid rgba(232, 194, 122, 0.45);
+        }
+
+        .wax-seal {
+            position: absolute;
+            bottom: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 30%, #f7dfad, #c89b4b);
+            color: #090b10;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 14px rgba(232, 194, 122, 0.5);
+            transition: opacity 0.3s ease;
+        }
+
+        .envelope-scene.opened .envelope-flap { transform: rotateX(180deg); z-index: 1; }
+        .envelope-scene.opened .wax-seal { opacity: 0; }
+        .envelope-scene.opened .envelope-shell {
+            opacity: 0.45;
+            transform: translateY(14px) scale(0.95);
+        }
+
+        .letter-sheet {
+            position: relative;
+            z-index: 6;
+            width: 100%;
+            background: linear-gradient(170deg, rgba(20, 26, 43, 0.97) 0%, rgba(11, 14, 24, 0.98) 100%);
+            border: 1.5px solid rgba(232, 194, 122, 0.55);
+            border-radius: 24px;
+            padding: 34px 28px;
+            text-align: center;
+            box-shadow:
+                    0 28px 90px rgba(0, 0, 0, 0.92),
+                    0 0 55px rgba(232, 194, 122, 0.22),
+                    inset 0 1px 0 rgba(255, 245, 220, 0.14);
+            transform: translateY(70px) scale(0.76);
+            opacity: 0;
+            transition: transform 0.95s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.55s ease;
+        }
+
+        .envelope-scene.opened .letter-sheet {
+            opacity: 1;
+            transform: translateY(-16px) scale(1);
+        }
+
+        .letter-badge { display: inline-block; font-size: 0.74rem; letter-spacing: 0.24em; text-transform: uppercase; color: var(--accent-gold); margin-bottom: 10px; }
+        .letter-sheet h2 { font-family: "Cinzel", serif; font-size: clamp(1.45rem, 3.6vw, 1.95rem); color: var(--accent-bright); margin-bottom: 16px; }
+        .letter-sheet p { font-family: "Cormorant Garamond", serif; font-style: italic; font-size: clamp(1.22rem, 2.6vw, 1.38rem); line-height: 1.7; color: var(--text-main); margin-bottom: 20px; }
+        .letter-sign { font-family: "Cinzel", serif; font-size: 0.95rem; letter-spacing: 0.12em; color: var(--accent-gold); margin-bottom: 22px; }
+
+        .letter-actions {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-letter-btn {
+            padding: 11px 26px;
+            border-radius: 999px;
+            border: none;
+            background: linear-gradient(135deg, #e8c27a, #c89b4b);
+            color: #080a0f;
+            font-family: "Cinzel", serif;
+            font-weight: 700;
+            font-size: 0.82rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+
+        @media (max-width: 600px) {
+            .song-label { max-width: 110px; }
+            .letter-sheet { padding: 28px 20px; }
         }
     </style>
 </head>
 <body>
-<!-- Cielo Interactivo a Pantalla Completa -->
-<canvas id="universe-canvas"></canvas>
+<canvas id="skyCanvas"></canvas>
+<audio id="bgAudio" preload="metadata" loop></audio>
 
-<!-- Barra Superior Minimalista -->
 <header class="top-bar">
-    <a href="index.html" class="back-btn">← Volver</a>
-
-    <div class="center-sky-title">
-        <span>Constelación de Amor</span>
-        <h1>10 Estrellas · Un Corazón</h1>
+    <div class="audio-controls">
+        <button type="button" class="pill-btn" id="audioToggle"><span id="audioIcon">🎵</span></button>
+        <span class="song-label" id="songTitleLabel">Perfect — Ed Sheeran</span>
+        <button type="button" class="pill-btn" id="songSwitchBtn">↻</button>
     </div>
-
-    <div class="music-controls">
-        <button class="audio-btn" id="audioToggle" type="button" title="Reproducir o pausar">
-            <span id="audioIcon">🎵</span>
-            <span class="song-pill" id="songTitleLabel">Perfect — Ed Sheeran</span>
-        </button>
-        <button class="audio-btn" id="songSwitchBtn" type="button" title="Cambiar canción">
-            ⇄
-        </button>
-    </div>
+    <a href="index.html" class="pill-btn" id="backLink">← Planetas</a>
 </header>
 
-<audio id="bgAudio" preload="auto"></audio>
+<div class="sky-header">
+    <h1>Nuestra Constelación</h1>
+    <p>Toca cada estrella brillante para descubrir un mensaje guardado para ti</p>
+    <span class="star-counter" id="starCounter">0 / 8 estrellas iluminadas</span>
+    <br />
+    <button type="button" class="reopen-envelope-btn" id="reopenEnvelopeBtn">✉️ Abrir carta de nuevo</button>
+</div>
 
-<!-- Panel Astronómico Discreto -->
-<aside class="astro-hud">
-    <div>
-        <span>Localización:</span>
-        <strong>Constelación del Corazón</strong>
-    </div>
-    <div class="divider"></div>
-    <div>
-        <span>Coordenadas:</span>
-        <strong>RA 13h 10m | Dec +23° 10'</strong>
-    </div>
-    <div class="divider"></div>
-    <div>
-        <span>Visibilidad:</span>
-        <strong>Infinita (Daniela &amp; Nicolás)</strong>
-    </div>
-</aside>
+<div class="memory-card" id="memoryCard">
+    <span class="memory-tag" id="memoryTag">Estrella I</span>
+    <h2 class="memory-title" id="memoryTitle"></h2>
+    <p class="memory-text" id="memoryText"></p>
+</div>
 
-<!-- Tarjeta Flotante Compacta y Plegable -->
-<section class="floating-star-hud" id="floatingHud">
-    <div class="hud-header">
-        <span class="hud-title" id="starTitleBadge">★ 01 · Luz de tus ojitos</span>
-        <div class="hud-right-tools">
-            <span class="hud-counter" id="discoveredCount">1 / 10</span>
-            <button type="button" class="hud-minimize-btn" id="toggleHudBtn" title="Ocultar o mostrar texto">
-                −
-            </button>
+<!-- SOBRE SUTIL CON CARTA PROTAGONISTA -->
+<div class="envelope-overlay" id="envelopeOverlay">
+    <div class="envelope-scene" id="envelopeScene">
+        <div class="envelope-shell">
+            <div class="envelope-pocket"></div>
+            <div class="envelope-flap"><div class="wax-seal">♥</div></div>
         </div>
-    </div>
 
-    <div class="hud-body">
-        <p class="star-quote" id="starQuoteText">
-            «Tus ojitos hermosos, que iluminan mis días incluso cuando todo parece oscuro.»
-        </p>
-
-        <div class="hud-controls">
-            <div class="hud-btn-group">
-                <button type="button" class="ctrl-btn" id="prevStarBtn">← Anterior</button>
-                <button type="button" class="ctrl-btn primary" id="nextStarBtn">Siguiente ★</button>
+        <div class="letter-sheet">
+            <span class="letter-badge">✨ Constelación completada ✨</span>
+            <h2>Para ti, mi Daniela</h2>
+            <p>
+                «Iluminaste cada estrella de nuestro cielo, tal como iluminas cada día de mi vida desde aquel 13 de octubre de 2023. No importa cuántos años pasen ni cuántos lugares recorramos: mi lugar favorito siempre será a tu lado.»
+            </p>
+            <div class="letter-sign">Con todo mi amor, Nicolás ♥</div>
+            <div class="letter-actions">
+                <button type="button" class="close-letter-btn" id="closeLetterBtn">Seguir mirando el cielo</button>
             </div>
-            <button type="button" class="ctrl-btn" id="revealAllBtn">✦ Formar corazón</button>
         </div>
     </div>
-</section>
-
-<div class="sky-hint">Toca cualquier estrella en el cielo para encender el corazón ✨</div>
+</div>
 
 <script>
     /* =====================================================================
-       1. MOTOR DE PLANETA ECLIPSE 3D REALISTA CON ROTACIÓN AXIAL LENTA
+       1. CONSTELACIÓN CON ESTRELLAS RADIALES GRANDES + ESTRELLA MENSAJERA
        ===================================================================== */
-    function createRotatingEclipsePlanet() {
-        const W_TEX = 512;
-        const H_TEX = 256;
-        const S = 340;
-        const cx = S / 2;
-        const cy = S / 2;
-        const radius = S * 0.365;
-
-        const perm = new Uint8Array(512);
-        let seed = 13102023;
-        const p = new Uint8Array(256);
-        for (let i = 0; i < 256; i++) p[i] = i;
-        for (let i = 255; i > 0; i--) {
-            seed = (seed * 16807) % 2147483647;
-            const j = seed % (i + 1);
-            const tmp = p[i];
-            p[i] = p[j];
-            p[j] = tmp;
-        }
-        for (let i = 0; i < 512; i++) perm[i] = p[i & 255];
-
-        function fade(t) { return t * t * t * (t * (t * 6 - 15) + 10); }
-        function lerp(a, b, t) { return a + t * (b - a); }
-        function hash3(x, y, z) {
-            return perm[(perm[(perm[x & 255] + (y & 255)) & 255] + (z & 255)) & 255] / 255;
-        }
-        function noise3D(x, y, z) {
-            const X = Math.floor(x), Y = Math.floor(y), Z = Math.floor(z);
-            const fx = fade(x - X), fy = fade(y - Y), fz = fade(z - Z);
-            const c000 = hash3(X, Y, Z), c100 = hash3(X + 1, Y, Z);
-            const c010 = hash3(X, Y + 1, Z), c110 = hash3(X + 1, Y + 1, Z);
-            const c001 = hash3(X, Y, Z + 1), c101 = hash3(X + 1, Y, Z + 1);
-            const c011 = hash3(X, Y + 1, Z + 1), c111 = hash3(X + 1, Y + 1, Z + 1);
-            return lerp(
-                lerp(lerp(c000, c100, fx), lerp(c010, c110, fx), fy),
-                lerp(lerp(c001, c101, fx), lerp(c011, c111, fx), fy),
-                fz
-            );
-        }
-
-        function fbm(x, y, z) {
-            let val = 0, amp = 0.52, freq = 2.4;
-            for (let o = 0; o < 5; o++) {
-                val += amp * noise3D(x * freq, y * freq, z * freq);
-                freq *= 2.08;
-                amp *= 0.48;
-            }
-            const ridge = 1 - Math.abs(noise3D(x * 6.8, y * 6.8, z * 6.8) * 2 - 1);
-            return val * 0.76 + ridge * ridge * 0.24;
-        }
-
-        const craters = [];
-        for (let k = 0; k < 28; k++) {
-            seed = (seed * 16807) % 2147483647;
-            const u = (seed / 2147483647) * Math.PI * 2;
-            seed = (seed * 16807) % 2147483647;
-            const v = Math.acos(2 * (seed / 2147483647) - 1);
-            seed = (seed * 16807) % 2147483647;
-            const cr = 0.06 + (seed / 2147483647) * 0.16;
-            craters.push({
-                x: Math.sin(v) * Math.cos(u),
-                y: Math.cos(v),
-                z: Math.sin(v) * Math.sin(u),
-                r: cr
-            });
-        }
-
-        const heightMap = new Float32Array(W_TEX * H_TEX);
-        const albedoMap = new Float32Array(W_TEX * H_TEX);
-        const cloudMap = new Float32Array(W_TEX * H_TEX);
-
-        for (let ty = 0; ty < H_TEX; ty++) {
-            const phi = (ty / (H_TEX - 1)) * Math.PI;
-            const sinPhi = Math.sin(phi);
-            const sy = Math.cos(phi);
-
-            for (let tx = 0; tx < W_TEX; tx++) {
-                const theta = (tx / W_TEX) * Math.PI * 2;
-                const sx = sinPhi * Math.cos(theta);
-                const sz = sinPhi * Math.sin(theta);
-
-                const continent = fbm(sx + 1.4, sy - 0.6, sz + 0.9);
-                const detail = fbm(sx * 3.1 + 4.2, sy * 3.1 - 1.3, sz * 3.1 + 2.7);
-                let h = continent * 0.72 + detail * 0.28;
-
-                for (let c = 0; c < craters.length; c++) {
-                    const cr = craters[c];
-                    const dist = Math.hypot(sx - cr.x, sy - cr.y, sz - cr.z);
-                    if (dist < cr.r * 1.35) {
-                        const t = dist / cr.r;
-                        if (t < 1.0) {
-                            h -= (1 - t * t) * 0.16;
-                        } else {
-                            const rim = 1 - Math.abs(t - 1.12) / 0.23;
-                            if (rim > 0) h += rim * 0.07;
-                        }
-                    }
-                }
-
-                const idx = ty * W_TEX + tx;
-                heightMap[idx] = h;
-                albedoMap[idx] = continent < 0.48 ? 10 + h * 22 : 18 + h * 38;
-
-                const cNoise = fbm(sx * 1.8 - 2.1, sy * 3.6 + 0.5, sz * 1.8 + 1.7);
-                cloudMap[idx] = cNoise > 0.56 ? (cNoise - 0.56) * 2.2 : 0;
-            }
-        }
-
-        const bumpX = new Float32Array(W_TEX * H_TEX);
-        const bumpY = new Float32Array(W_TEX * H_TEX);
-        for (let ty = 0; ty < H_TEX; ty++) {
-            const yUp = Math.max(0, ty - 1);
-            const yDn = Math.min(H_TEX - 1, ty + 1);
-            for (let tx = 0; tx < W_TEX; tx++) {
-                const xLt = (tx - 1 + W_TEX) % W_TEX;
-                const xRt = (tx + 1) % W_TEX;
-                const idx = ty * W_TEX + tx;
-                bumpX[idx] = (heightMap[ty * W_TEX + xLt] - heightMap[ty * W_TEX + xRt]) * 4.2;
-                bumpY[idx] = (heightMap[yUp * W_TEX + tx] - heightMap[yDn * W_TEX + tx]) * 4.2;
-            }
-        }
-
-        const haloCanvas = document.createElement("canvas");
-        haloCanvas.width = S;
-        haloCanvas.height = S;
-        const hctx = haloCanvas.getContext("2d");
-
-        const goldHalo = hctx.createRadialGradient(
-            cx - radius * 0.34, cy - radius * 0.22, radius * 0.42,
-            cx - radius * 0.18, cy - radius * 0.08, radius * 1.48
-        );
-        goldHalo.addColorStop(0, "rgba(246, 201, 117, 0.34)");
-        goldHalo.addColorStop(0.55, "rgba(218, 165, 82, 0.12)");
-        goldHalo.addColorStop(1, "rgba(0, 0, 0, 0)");
-        hctx.fillStyle = goldHalo;
-        hctx.fillRect(0, 0, S, S);
-
-        const cyanHalo = hctx.createRadialGradient(
-            cx + radius * 0.36, cy - radius * 0.18, radius * 0.42,
-            cx + radius * 0.2, cy - radius * 0.08, radius * 1.45
-        );
-        cyanHalo.addColorStop(0, "rgba(79, 209, 197, 0.26)");
-        cyanHalo.addColorStop(0.55, "rgba(56, 168, 178, 0.1)");
-        cyanHalo.addColorStop(1, "rgba(0, 0, 0, 0)");
-        hctx.fillStyle = cyanHalo;
-        hctx.fillRect(0, 0, S, S);
-
-        const haloImgData = hctx.getImageData(0, 0, S, S);
-
-        const frameCanvas = document.createElement("canvas");
-        frameCanvas.width = S;
-        frameCanvas.height = S;
-        const fctx = frameCanvas.getContext("2d");
-        const frameImg = fctx.createImageData(S, S);
-        frameImg.data.set(haloImgData.data);
-
-        const tilt = (14 * Math.PI) / 180;
-        const cosT = Math.cos(tilt);
-        const sinT = Math.sin(tilt);
-
-        const activePixels = [];
-        for (let py = 0; py < S; py++) {
-            const dy = (py - cy) / radius;
-            if (Math.abs(dy) > 1.02) continue;
-
-            for (let px = 0; px < S; px++) {
-                const dx = (px - cx) / radius;
-                const r2 = dx * dx + dy * dy;
-                if (r2 > 1.0) continue;
-
-                const nz = Math.sqrt(Math.max(0, 1 - r2));
-                const nx = dx;
-                const ny = dy;
-
-                const rx = nx * cosT - ny * sinT;
-                const ry = nx * sinT + ny * cosT;
-                const rz = nz;
-
-                const uBase = (Math.atan2(rz, rx) / (Math.PI * 2) + 1) % 1;
-                const v = Math.acos(Math.max(-1, Math.min(1, ry))) / Math.PI;
-                const ty = Math.min(H_TEX - 1, (v * H_TEX) | 0);
-
-                const fresnel = Math.pow(1 - nz, 3.3);
-                const upperMask = Math.max(0, 1 - Math.max(0, ny * 0.85 + 0.14));
-                const leftWeight = Math.max(0, Math.min(1, 0.56 - nx * 0.78));
-                const rightWeight = 1 - leftWeight;
-
-                const rimGold = fresnel * upperMask * leftWeight * 1.6;
-                const rimCyan = fresnel * upperMask * rightWeight * 1.48;
-                const eclipseShade = Math.max(0.13, 1 - Math.max(0, ny * 0.92));
-                const edgeAlpha = r2 > 0.98 ? Math.max(0, (1 - r2) / 0.02) : 1;
-
-                const pIdx = (py * S + px) * 4;
-                activePixels.push({
-                    pIdx,
-                    nx,
-                    ny,
-                    nz,
-                    uBase,
-                    rowOffset: ty * W_TEX,
-                    rimGold,
-                    rimCyan,
-                    eclipseShade,
-                    edgeAlpha,
-                    bgR: haloImgData.data[pIdx],
-                    bgG: haloImgData.data[pIdx + 1],
-                    bgB: haloImgData.data[pIdx + 2]
-                });
-            }
-        }
-
-        let spinAngle = 0.25;
-
-        return {
-            render(deltaSpin = 0.00028) {
-                spinAngle = (spinAngle + deltaSpin) % 1;
-                const cloudSpin = (spinAngle * 1.28) % 1;
-                const out = frameImg.data;
-
-                for (let i = 0; i < activePixels.length; i++) {
-                    const px = activePixels[i];
-                    const u = (px.uBase + spinAngle) % 1;
-                    const tx = (u * W_TEX) | 0;
-                    const tIdx = px.rowOffset + tx;
-
-                    const uCloud = (px.uBase + cloudSpin) % 1;
-                    const cIdx = px.rowOffset + ((uCloud * W_TEX) | 0);
-
-                    let bx = px.nx + bumpX[tIdx];
-                    let by = px.ny + bumpY[tIdx];
-                    let bz = px.nz;
-                    const invLen = 1 / (Math.hypot(bx, by, bz) || 1);
-                    bx *= invLen;
-                    by *= invLen;
-                    bz *= invLen;
-
-                    const lGold = Math.max(0, bx * -0.78 + by * -0.52 + bz * 0.34);
-                    const lCyan = Math.max(0, bx * 0.82 + by * -0.44 + bz * 0.35);
-
-                    const rock = albedoMap[tIdx];
-                    const cloud = cloudMap[cIdx] * (lGold * 0.8 + lCyan * 0.6 + 0.15);
-
-                    let r = rock * 1.04 + lGold * 92 + cloud * 46 + px.rimGold * 240 + px.rimCyan * 50;
-                    let g = rock * 1.01 + lGold * 70 + lCyan * 36 + cloud * 44 + px.rimGold * 192 + px.rimCyan * 190;
-                    let b = rock * 1.12 + lGold * 40 + lCyan * 62 + cloud * 52 + px.rimGold * 112 + px.rimCyan * 206;
-
-                    r *= px.eclipseShade;
-                    g *= px.eclipseShade;
-                    b *= px.eclipseShade;
-
-                    const a = px.edgeAlpha;
-                    const invA = 1 - a;
-                    const idx = px.pIdx;
-                    out[idx] = Math.min(255, px.bgR * invA + r * a);
-                    out[idx + 1] = Math.min(255, px.bgG * invA + g * a);
-                    out[idx + 2] = Math.min(255, px.bgB * invA + b * a);
-                    out[idx + 3] = 255;
-                }
-
-                fctx.putImageData(frameImg, 0, 0);
-                return frameCanvas;
-            }
-        };
-    }
-
-    const rotatingPlanet = createRotatingEclipsePlanet();
-
-    /* =====================================================================
-       2. CONSTELACIÓN ASTRONÓMICA REALISTA DE LAS 10 ESTRELLAS (FORMA DE CORAZÓN)
-       ===================================================================== */
-    const constellationData = [
-        {
-            code: "α · 01",
-            title: "Luz de tus ojitos",
-            text: "Tus ojitos hermosos, que iluminan mis días incluso cuando todo parece oscuro.",
-            nx: 0.0,
-            ny: -0.34
-        },
-        {
-            code: "β · 02",
-            title: "Tu sonrisa dulce",
-            text: "Tu sonrisa dulce, capaz de alegrarme cualquier momento al instante.",
-            nx: -0.36,
-            ny: -0.68
-        },
-        {
-            code: "γ · 03",
-            title: "Tu cabello al viento",
-            text: "Tu cabello peleando contra el viento, tal como me enamoró desde que te vi.",
-            nx: -0.78,
-            ny: -0.46
-        },
-        {
-            code: "δ · 04",
-            title: "Nuestras charlas eternas",
-            text: "La forma tan linda en que conversamos sin mirar nunca el reloj.",
-            nx: -0.74,
-            ny: 0.04
-        },
-        {
-            code: "ε · 05",
-            title: "Nuestra complicidad",
-            text: "Nuestra complicidad para reírnos de nuestras cosas y disfrutar hasta lo más simple.",
-            nx: -0.40,
-            ny: 0.44
-        },
-        {
-            code: "ζ · 06",
-            title: "La mujer que eres",
-            text: "Tu inteligencia, tu esfuerzo y la mujer maravillosa que eres cada día.",
-            nx: 0.0,
-            ny: 0.78
-        },
-        {
-            code: "η · 07",
-            title: "El corazón a mil",
-            text: "La ternura que siento cada vez que cruzamos miradas y me pones el corazón a mil.",
-            nx: 0.40,
-            ny: 0.44
-        },
-        {
-            code: "θ · 08",
-            title: "El brillo de estar juntos",
-            text: "El brillo de tus ojos cuando estamos juntos en una plaza, frente al mar o en casa.",
-            nx: 0.74,
-            ny: 0.04
-        },
-        {
-            code: "ι · 09",
-            title: "El corazón de nuestro hogar",
-            text: "Lo mucho que te quiere mi familia y cómo te volviste el corazón de nuestro hogar.",
-            nx: 0.78,
-            ny: -0.46
-        },
-        {
-            code: "κ · 10",
-            title: "Nuestro 13 de Octubre",
-            text: "Que desde el 13 de octubre de 2023 caminar a tu lado es mi mayor orgullo.",
-            nx: 0.36,
-            ny: -0.68
-        }
-    ];
-
-    const internalAstroFilaments = [
-        [0, 5],
-        [1, 4],
-        [9, 6],
-        [3, 7]
-    ];
-
-    const canvas = document.getElementById("universe-canvas");
+    const canvas = document.getElementById("skyCanvas");
     const ctx = canvas.getContext("2d");
-    let width = (canvas.width = window.innerWidth);
-    let height = (canvas.height = window.innerHeight);
 
-    const bgStars = [];
-    const bgConstellations = [];
-    const bursts = [];
-    const shootingStars = [];
+    const starMemories = [
+        { x:  0.00, y: -0.42, title: "Tu sonrisa", text: "«Es lo primero que ilumina mis días y el motivo por el que todo vale la pena.»" },
+        { x: -0.48, y: -0.92, title: "Nuestra complicidad", text: "«Esa forma tan nuestra de entendernos incluso sin decir una sola palabra.»" },
+        { x: -0.96, y: -0.46, title: "13 de Octubre", text: "«El día en que el universo decidió juntar nuestros caminos para siempre.»" },
+        { x: -0.74, y:  0.18, title: "Tus abrazos", text: "«El único lugar del mundo donde desaparece cualquier miedo o cansancio.»" },
+        { x:  0.00, y:  0.90, title: "Nuestro futuro", text: "«Todos los sueños, viajes y momentos que todavía nos esperan por vivir juntos.»" },
+        { x:  0.74, y:  0.18, title: "Tu ternura", text: "«La delicadeza con la que llenas de amor cada pequeño detalle de nuestra historia.»" },
+        { x:  0.96, y: -0.46, title: "Nuestras risas", text: "«Mi melodía favorita en todo el universo entero.»" },
+        { x:  0.48, y: -0.92, title: "Te amo, Daniela", text: "«Hoy, mañana y en cada vida en la que volvamos a coincidir.»" }
+    ];
 
-    let activeIndex = 0;
-    let hoveredIndex = -1;
-    const discovered = new Set([0]);
+    let bgStars = [], shootingStars = [], sparkles = [];
+    let carrierStar = null;
+    let activeStarIndex = -1, constellationCompleted = false;
+    const discovered = new Set();
+
+    const memoryCard = document.getElementById("memoryCard");
+    const memoryTag = document.getElementById("memoryTag");
+    const memoryTitle = document.getElementById("memoryTitle");
+    const memoryText = document.getElementById("memoryText");
+    const starCounter = document.getElementById("starCounter");
+    const envelopeOverlay = document.getElementById("envelopeOverlay");
+    const envelopeScene = document.getElementById("envelopeScene");
+    const reopenEnvelopeBtn = document.getElementById("reopenEnvelopeBtn");
 
     function initSky() {
-        bgStars.length = 0;
-        const count = Math.min(280, Math.floor((width * height) / 5200));
-        for (let i = 0; i < count; i++) {
-            bgStars.push({
-                x: Math.random() * width,
-                y: Math.random() * height,
-                r: Math.random() * 1.55 + 0.25,
-                a: Math.random() * 0.85 + 0.15,
-                da: (Math.random() * 0.014 + 0.004) * (Math.random() < 0.5 ? 1 : -1)
-            });
-        }
-
-        bgConstellations.length = 0;
-        const zones = [
-            { cx: width * 0.12, cy: height * 0.34 },
-            { cx: width * 0.88, cy: height * 0.30 },
-            { cx: width * 0.85, cy: height * 0.72 }
-        ];
-        zones.forEach((z) => {
-            const pts = [];
-            for (let k = 0; k < 5; k++) {
-                pts.push({
-                    x: z.cx + (Math.random() - 0.5) * 130,
-                    y: z.cy + (Math.random() - 0.5) * 100
-                });
-            }
-            bgConstellations.push(pts);
-        });
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        bgStars = Array.from({ length: 170 }, () => ({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            r: Math.random() * 1.5 + 0.25,
+            phase: Math.random() * Math.PI * 2,
+            speed: Math.random() * 0.02 + 0.005
+        }));
     }
 
-    function getStarScreenPos(idx) {
-        const s = constellationData[idx];
-        const isMobile = width < 768;
-        const centerX = width * (isMobile ? 0.5 : 0.54);
-        const centerY = height * (isMobile ? 0.42 : 0.46);
-        const scaleX = Math.min(width * (isMobile ? 0.44 : 0.31), 295);
-        const scaleY = Math.min(height * (isMobile ? 0.27 : 0.33), 255);
-        return {
-            x: centerX + s.nx * scaleX,
-            y: centerY + s.ny * scaleY
-        };
+    function spawnShootingStar() {
+        const startX = Math.random() * canvas.width * 0.9;
+        const startY = Math.random() * canvas.height * 0.35;
+        const angle = (Math.PI / 5) + Math.random() * 0.25;
+        const speed = 9 + Math.random() * 6;
+        shootingStars.push({ x: startX, y: startY, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed, len: 95 + Math.random() * 75, life: 1 });
     }
 
-    function createBurst(x, y) {
-        for (let i = 0; i < 34; i++) {
-            const angle = (Math.PI * 2 * i) / 34 + Math.random() * 0.25;
-            const speed = Math.random() * 3.8 + 1.2;
-            bursts.push({
-                x,
-                y,
-                vx: Math.cos(angle) * speed,
-                vy: Math.sin(angle) * speed,
-                r: Math.random() * 2.2 + 0.8,
-                a: 1,
-                color: i % 2 === 0 ? "248, 215, 148" : "126, 232, 223"
-            });
-        }
-    }
+    setInterval(() => { if (Math.random() < 0.72) spawnShootingStar(); }, 3400);
 
-    function drawAstronomicalStar(x, y, isActive, isDiscovered, isHovered, pulse) {
-        const baseRadius = isActive ? 4.4 : isDiscovered ? 3.2 : 2.5;
-        const spikeLen = (isActive ? 26 : isDiscovered ? 16 : 11) + (isHovered ? 5 : 0) + pulse * 3;
-        const haloRadius = isActive ? 36 : isDiscovered ? 22 : 14;
-
-        const halo = ctx.createRadialGradient(x, y, 0, x, y, haloRadius);
-        if (isActive) {
-            halo.addColorStop(0, "rgba(255, 255, 255, 0.95)");
-            halo.addColorStop(0.28, "rgba(248, 215, 148, 0.65)");
-            halo.addColorStop(0.65, "rgba(126, 232, 223, 0.18)");
-            halo.addColorStop(1, "rgba(0, 0, 0, 0)");
-        } else if (isDiscovered) {
-            halo.addColorStop(0, "rgba(255, 250, 235, 0.85)");
-            halo.addColorStop(0.35, "rgba(232, 194, 122, 0.35)");
-            halo.addColorStop(1, "rgba(0, 0, 0, 0)");
-        } else {
-            halo.addColorStop(0, "rgba(235, 242, 255, 0.7)");
-            halo.addColorStop(0.45, "rgba(180, 205, 255, 0.18)");
-            halo.addColorStop(1, "rgba(0, 0, 0, 0)");
-        }
-
-        ctx.fillStyle = halo;
-        ctx.beginPath();
-        ctx.arc(x, y, haloRadius, 0, Math.PI * 2);
-        ctx.fill();
-
+    function drawCelestialStar(x, y, size, intensity = 1, rotAngle = 0) {
         ctx.save();
         ctx.translate(x, y);
-        const spikeAlpha = isActive ? 0.92 : isDiscovered ? 0.65 : 0.42;
 
-        const gradH = ctx.createLinearGradient(-spikeLen, 0, spikeLen, 0);
-        gradH.addColorStop(0, "rgba(255, 255, 255, 0)");
-        gradH.addColorStop(0.5, `rgba(255, 248, 228, ${spikeAlpha})`);
-        gradH.addColorStop(1, "rgba(255, 255, 255, 0)");
-        ctx.strokeStyle = gradH;
-        ctx.lineWidth = isActive ? 1.5 : 1;
+        const outerHalo = ctx.createRadialGradient(0, 0, 1, 0, 0, size * 2.4);
+        outerHalo.addColorStop(0, `rgba(255, 248, 224, ${0.95 * intensity})`);
+        outerHalo.addColorStop(0.35, `rgba(232, 194, 122, ${0.45 * intensity})`);
+        outerHalo.addColorStop(1, "rgba(232, 194, 122, 0)");
         ctx.beginPath();
-        ctx.moveTo(-spikeLen, 0);
-        ctx.lineTo(spikeLen, 0);
-        ctx.stroke();
-
-        const gradV = ctx.createLinearGradient(0, -spikeLen, 0, spikeLen);
-        gradV.addColorStop(0, "rgba(255, 255, 255, 0)");
-        gradV.addColorStop(0.5, `rgba(255, 248, 228, ${spikeAlpha})`);
-        gradV.addColorStop(1, "rgba(255, 255, 255, 0)");
-        ctx.strokeStyle = gradV;
-        ctx.beginPath();
-        ctx.moveTo(0, -spikeLen);
-        ctx.lineTo(0, spikeLen);
-        ctx.stroke();
-
-        if (isActive) {
-            ctx.beginPath();
-            ctx.arc(0, 0, 14 + pulse * 2.5, 0, Math.PI * 2);
-            ctx.strokeStyle = "rgba(248, 215, 148, 0.55)";
-            ctx.lineWidth = 1;
-            ctx.stroke();
-        }
-
-        ctx.beginPath();
-        ctx.arc(0, 0, baseRadius, 0, Math.PI * 2);
-        ctx.fillStyle = "#ffffff";
+        ctx.arc(0, 0, size * 2.4, 0, Math.PI * 2);
+        ctx.fillStyle = outerHalo;
         ctx.fill();
+
+        ctx.rotate(rotAngle);
+        const drawSpike = (len, width, alpha) => {
+            const g = ctx.createLinearGradient(-len, 0, len, 0);
+            g.addColorStop(0, "rgba(232, 194, 122, 0)");
+            g.addColorStop(0.5, `rgba(255, 250, 232, ${alpha})`);
+            g.addColorStop(1, "rgba(232, 194, 122, 0)");
+            ctx.fillStyle = g;
+            ctx.beginPath();
+            ctx.moveTo(-len, 0);
+            ctx.quadraticCurveTo(0, -width, len, 0);
+            ctx.quadraticCurveTo(0, width, -len, 0);
+            ctx.fill();
+        };
+
+        drawSpike(size * 1.95, size * 0.22, 0.9 * intensity);
+        ctx.rotate(Math.PI / 2);
+        drawSpike(size * 1.95, size * 0.22, 0.9 * intensity);
+
+        ctx.rotate(Math.PI / 4);
+        drawSpike(size * 1.15, size * 0.13, 0.65 * intensity);
+        ctx.rotate(Math.PI / 2);
+        drawSpike(size * 1.15, size * 0.13, 0.65 * intensity);
+
+        ctx.beginPath();
+        ctx.arc(0, 0, size * 0.36, 0, Math.PI * 2);
+        ctx.fillStyle = "#fffdf7";
+        ctx.fill();
+
         ctx.restore();
     }
 
-    function renderSky() {
-        const now = Date.now() * 0.003;
-        ctx.fillStyle = "#030407";
-        ctx.fillRect(0, 0, width, height);
+    function getStarCoords(star, heartbeatScale = 1) {
+        const topSafe = 165;
+        const bottomSafe = canvas.height - 175;
+        const safeHeight = Math.max(220, bottomSafe - topSafe);
+        const centerX = canvas.width / 2;
+        const centerY = topSafe + safeHeight * 0.49;
+        const halfW = Math.min(canvas.width * 0.42, 340);
+        const halfH = Math.min(safeHeight * 0.48, 225);
 
-        // 1. Planeta eclipse 3D girando lentamente en el fondo
-        const planetFrame = rotatingPlanet.render(0.00028);
-        const planetDrawSize = Math.min(width * 0.88, height * 0.94, 780);
-        const px = (width - planetDrawSize) / 2;
-        const py = (height - planetDrawSize) / 2 + Math.sin(Date.now() * 0.0004) * 4;
-        ctx.drawImage(planetFrame, px, py, planetDrawSize, planetDrawSize);
+        return {
+            x: centerX + star.x * halfW * heartbeatScale,
+            y: centerY + star.y * halfH * heartbeatScale
+        };
+    }
 
-        // 2. Constelaciones lejanas de fondo
-        for (const poly of bgConstellations) {
-            ctx.strokeStyle = "rgba(255, 255, 255, 0.08)";
-            ctx.lineWidth = 0.8;
-            ctx.beginPath();
-            poly.forEach((pt, idx) => {
-                if (idx === 0) ctx.moveTo(pt.x, pt.y);
-                else ctx.lineTo(pt.x, pt.y);
-            });
-            ctx.stroke();
+    function launchEnvelopeSequence() {
+        carrierStar = {
+            startX: -60,
+            startY: canvas.height * 0.15,
+            targetX: canvas.width / 2,
+            targetY: canvas.height / 2,
+            progress: 0,
+            history: []
+        };
+    }
 
-            for (const pt of poly) {
-                ctx.beginPath();
-                ctx.arc(pt.x, pt.y, 1.5, 0, Math.PI * 2);
-                ctx.fillStyle = "rgba(246, 201, 117, 0.25)";
-                ctx.fill();
-            }
-        }
+    function openEnvelopeWithLetter() {
+        memoryCard.classList.remove("active");
+        envelopeScene.classList.remove("opened");
+        envelopeOverlay.classList.add("open");
+        reopenEnvelopeBtn.classList.add("show");
+        setTimeout(() => {
+            envelopeScene.classList.add("opened");
+        }, 650);
+    }
 
-        // 3. Estrellas de fondo
+    function renderSky(nowMs) {
+        const t = (nowMs || performance.now()) * 0.001;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
         for (const s of bgStars) {
-            s.a += s.da;
-            if (s.a <= 0.15 || s.a >= 1) s.da *= -1;
+            s.phase += s.speed;
+            const alpha = 0.2 + Math.abs(Math.sin(s.phase)) * 0.75;
             ctx.beginPath();
             ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(255, 250, 240, ${s.a * 0.8})`;
+            ctx.fillStyle = `rgba(245, 232, 200, ${alpha})`;
             ctx.fill();
-        }
-
-        // 4. Estrellas fugaces ocasionales
-        if (shootingStars.length < 2 && Math.random() < 0.012) {
-            shootingStars.push({
-                x: Math.random() * width * 0.8,
-                y: Math.random() * height * 0.35,
-                len: Math.random() * 115 + 75,
-                speed: Math.random() * 9 + 7,
-                a: 1
-            });
         }
 
         for (let i = shootingStars.length - 1; i >= 0; i--) {
             const st = shootingStars[i];
-            st.x += st.speed;
-            st.y += st.speed * 0.5;
-            st.a -= 0.018;
-
-            const grad = ctx.createLinearGradient(st.x, st.y, st.x - st.len, st.y - st.len * 0.5);
-            grad.addColorStop(0, `rgba(255, 244, 214, ${st.a})`);
-            grad.addColorStop(1, "rgba(255, 244, 214, 0)");
-
-            ctx.strokeStyle = grad;
-            ctx.lineWidth = 1.6;
-            ctx.beginPath();
-            ctx.moveTo(st.x, st.y);
-            ctx.lineTo(st.x - st.len, st.y - st.len * 0.5);
-            ctx.stroke();
-
-            if (st.a <= 0) shootingStars.splice(i, 1);
+            st.x += st.vx; st.y += st.vy; st.life -= 0.022;
+            if (st.life <= 0) { shootingStars.splice(i, 1); continue; }
+            const norm = Math.hypot(st.vx, st.vy);
+            const tailX = st.x - (st.vx / norm) * st.len;
+            const tailY = st.y - (st.vy / norm) * st.len;
+            const grad = ctx.createLinearGradient(st.x, st.y, tailX, tailY);
+            grad.addColorStop(0, `rgba(255, 245, 215, ${st.life})`);
+            grad.addColorStop(1, "rgba(232, 194, 122, 0)");
+            ctx.beginPath(); ctx.moveTo(st.x, st.y); ctx.lineTo(tailX, tailY);
+            ctx.strokeStyle = grad; ctx.lineWidth = 1.9; ctx.stroke();
         }
 
-        // 5. Filamentos internos tenues de carta estelar
-        const positions = constellationData.map((_, idx) => getStarScreenPos(idx));
-        ctx.save();
-        ctx.setLineDash([2, 5]);
-        ctx.strokeStyle = "rgba(255, 255, 255, 0.09)";
-        ctx.lineWidth = 0.8;
-        for (const [a, b] of internalAstroFilaments) {
-            ctx.beginPath();
-            ctx.moveTo(positions[a].x, positions[a].y);
-            ctx.lineTo(positions[b].x, positions[b].y);
-            ctx.stroke();
-        }
-        ctx.restore();
+        const heartbeat = constellationCompleted ? 1 + Math.sin(t * 4.5) * 0.035 : 1;
 
-        // 6. Líneas del contorno del corazón de la constelación
-        for (let i = 0; i < positions.length; i++) {
-            const nextIdx = (i + 1) % positions.length;
-            const p1 = positions[i];
-            const p2 = positions[nextIdx];
-            const isLit = discovered.has(i) && discovered.has(nextIdx);
+        ctx.lineWidth = constellationCompleted ? 2.6 : 1.9;
+        for (let i = 0; i < starMemories.length; i++) {
+            const next = (i + 1) % starMemories.length;
+            const p1 = getStarCoords(starMemories[i], heartbeat);
+            const p2 = getStarCoords(starMemories[next], heartbeat);
+            const bothLit = discovered.has(i) && discovered.has(next);
 
-            ctx.save();
             ctx.beginPath();
             ctx.moveTo(p1.x, p1.y);
             ctx.lineTo(p2.x, p2.y);
-
-            if (isLit) {
-                ctx.strokeStyle = "rgba(248, 215, 148, 0.72)";
-                ctx.lineWidth = 1.35;
-                ctx.shadowColor = "rgba(246, 201, 117, 0.7)";
-                ctx.shadowBlur = 8;
-            } else {
-                ctx.setLineDash([3, 5]);
-                ctx.strokeStyle = "rgba(255, 255, 255, 0.2)";
-                ctx.lineWidth = 0.9;
-            }
+            ctx.strokeStyle = constellationCompleted
+                ? "rgba(248, 220, 155, 0.94)"
+                : bothLit ? "rgba(232, 194, 122, 0.85)" : "rgba(232, 194, 122, 0.24)";
             ctx.stroke();
-            ctx.restore();
         }
 
-        // 7. Dibujar las 10 estrellas principales + etiquetas astronómicas sutiles
-        positions.forEach((pos, idx) => {
-            const isActive = idx === activeIndex;
-            const isDiscovered = discovered.has(idx);
-            const isHovered = idx === hoveredIndex;
-            const pulse = Math.sin(now + idx * 0.8) * 0.5 + 0.5;
-
-            drawAstronomicalStar(pos.x, pos.y, isActive, isDiscovered, isHovered, pulse);
-
-            ctx.font = isActive ? "600 11px 'Cinzel', serif" : "500 10px 'Plus Jakarta Sans', sans-serif";
-            ctx.fillStyle = isActive
-                ? "rgba(248, 215, 148, 0.95)"
-                : isDiscovered
-                    ? "rgba(232, 194, 122, 0.72)"
-                    : "rgba(174, 182, 200, 0.55)";
-            ctx.fillText(String(idx + 1).padStart(2, "0"), pos.x + 11, pos.y - 9);
+        const pulse = Math.sin(t * 3.8) * 2.2;
+        starMemories.forEach((star, idx) => {
+            const { x, y } = getStarCoords(star, heartbeat);
+            const isLit = discovered.has(idx);
+            const isSelected = idx === activeStarIndex;
+            const baseSize = (constellationCompleted ? 22 : isSelected ? 21 : isLit ? 18 : 14) + pulse;
+            const intensity = isLit ? 1.05 : 0.78;
+            drawCelestialStar(x, y, baseSize, intensity, t * 0.25 + idx);
         });
 
-        // 8. Partículas de destello al encender una estrella
-        for (let i = bursts.length - 1; i >= 0; i--) {
-            const p = bursts[i];
-            p.x += p.vx;
-            p.y += p.vy;
-            p.vx *= 0.96;
-            p.vy *= 0.96;
-            p.a -= 0.022;
+        if (carrierStar) {
+            carrierStar.progress = Math.min(1, carrierStar.progress + 0.015);
+            const p = carrierStar.progress;
+            const ease = 1 - Math.pow(1 - p, 3);
+            const arcOffset = -Math.sin(p * Math.PI) * 110;
+            const cx = carrierStar.startX + (carrierStar.targetX - carrierStar.startX) * ease;
+            const cy = carrierStar.startY + (carrierStar.targetY - carrierStar.startY) * ease + arcOffset;
 
+            carrierStar.history.push({ x: cx, y: cy });
+            if (carrierStar.history.length > 26) carrierStar.history.shift();
+
+            for (let i = 1; i < carrierStar.history.length; i++) {
+                const ratio = i / carrierStar.history.length;
+                const prev = carrierStar.history[i - 1];
+                const curr = carrierStar.history[i];
+                ctx.beginPath();
+                ctx.moveTo(prev.x, prev.y);
+                ctx.lineTo(curr.x, curr.y);
+                ctx.strokeStyle = `rgba(255, 232, 175, ${ratio * 0.85})`;
+                ctx.lineWidth = ratio * 7;
+                ctx.lineCap = "round";
+                ctx.stroke();
+            }
+
+            drawCelestialStar(cx, cy, 34, 1.2, t * 2.2);
+
+            for (let k = 0; k < 3; k++) {
+                sparkles.push({
+                    x: cx + (Math.random() - 0.5) * 20,
+                    y: cy + (Math.random() - 0.5) * 20,
+                    vx: (Math.random() - 0.5) * 3.2,
+                    vy: (Math.random() - 0.5) * 3.2,
+                    life: 1
+                });
+            }
+
+            if (carrierStar.progress >= 1) {
+                for (let k = 0; k < 36; k++) {
+                    const ang = (Math.PI * 2 * k) / 36;
+                    const spd = 1.8 + Math.random() * 4.8;
+                    sparkles.push({ x: cx, y: cy, vx: Math.cos(ang) * spd, vy: Math.sin(ang) * spd, life: 1 });
+                }
+                carrierStar = null;
+                openEnvelopeWithLetter();
+            }
+        }
+
+        for (let i = sparkles.length - 1; i >= 0; i--) {
+            const sp = sparkles[i];
+            sp.x += sp.vx; sp.y += sp.vy; sp.life -= 0.024;
+            if (sp.life <= 0) { sparkles.splice(i, 1); continue; }
             ctx.beginPath();
-            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(${p.color}, ${Math.max(0, p.a)})`;
+            ctx.arc(sp.x, sp.y, 2.5 * sp.life, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(255, 242, 198, ${sp.life})`;
             ctx.fill();
-
-            if (p.a <= 0) bursts.splice(i, 1);
         }
 
         requestAnimationFrame(renderSky);
     }
 
-    /* =====================================================================
-       3. INTERACCIÓN CON LAS ESTRELLAS EN EL CIELO Y TARJETA FLOTANTE
-       ===================================================================== */
-    const starTitleBadge = document.getElementById("starTitleBadge");
-    const starQuoteText = document.getElementById("starQuoteText");
-    const discoveredCount = document.getElementById("discoveredCount");
-    const floatingHud = document.getElementById("floatingHud");
-    const toggleHudBtn = document.getElementById("toggleHudBtn");
+    canvas.addEventListener("click", (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const clickX = e.clientX - rect.left;
+        const clickY = e.clientY - rect.top;
 
-    function findStarAt(clientX, clientY) {
-        const positions = constellationData.map((_, idx) => getStarScreenPos(idx));
         let closestIdx = -1;
-        let minDist = 34;
-        positions.forEach((pos, idx) => {
-            const d = Math.hypot(clientX - pos.x, clientY - pos.y);
-            if (d < minDist) {
-                minDist = d;
+        let minDist = 48;
+
+        starMemories.forEach((star, idx) => {
+            const { x, y } = getStarCoords(star, 1);
+            const dist = Math.hypot(clickX - x, clickY - y);
+            if (dist < minDist) {
+                minDist = dist;
                 closestIdx = idx;
             }
         });
-        return closestIdx;
-    }
 
-    canvas.addEventListener("pointermove", (e) => {
-        const hit = findStarAt(e.clientX, e.clientY);
-        hoveredIndex = hit;
-        canvas.style.cursor = hit !== -1 ? "pointer" : "default";
-    });
+        if (closestIdx !== -1) {
+            activeStarIndex = closestIdx;
+            discovered.add(closestIdx);
+            const item = starMemories[closestIdx];
+            memoryTag.textContent = `Estrella ${closestIdx + 1} de ${starMemories.length}`;
+            memoryTitle.textContent = item.title;
+            memoryText.textContent = item.text;
+            memoryCard.classList.add("active");
 
-    canvas.addEventListener("pointerdown", (e) => {
-        const hit = findStarAt(e.clientX, e.clientY);
-        if (hit !== -1) {
-            selectStar(hit, true);
+            if (discovered.size === starMemories.length) {
+                starCounter.textContent = "✨ ¡Constelación completa! Te amo infinitamente ✨";
+                if (!constellationCompleted) {
+                    constellationCompleted = true;
+                    setTimeout(launchEnvelopeSequence, 650);
+                }
+            } else {
+                starCounter.textContent = `${discovered.size} / ${starMemories.length} estrellas iluminadas`;
+            }
         }
     });
 
-    function selectStar(idx, withBurst = true) {
-        activeIndex = (idx + constellationData.length) % constellationData.length;
-        discovered.add(activeIndex);
-
-        const item = constellationData[activeIndex];
-        starTitleBadge.textContent = `★ ${String(activeIndex + 1).padStart(2, "0")} · ${item.title}`;
-        starQuoteText.textContent = `«${item.text}»`;
-        discoveredCount.textContent = `${discovered.size} / 10`;
-
-        if (floatingHud.classList.contains("minimized")) {
-            floatingHud.classList.remove("minimized");
-            toggleHudBtn.textContent = "−";
-        }
-
-        if (withBurst) {
-            const pos = getStarScreenPos(activeIndex);
-            createBurst(pos.x, pos.y);
-        }
-    }
-
-    document.getElementById("prevStarBtn").addEventListener("click", () => {
-        selectStar(activeIndex - 1, true);
+    document.getElementById("closeLetterBtn").addEventListener("click", () => {
+        envelopeOverlay.classList.remove("open");
     });
 
-    document.getElementById("nextStarBtn").addEventListener("click", () => {
-        selectStar(activeIndex + 1, true);
+    envelopeOverlay.addEventListener("click", (e) => {
+        if (e.target === envelopeOverlay) envelopeOverlay.classList.remove("open");
     });
 
-    document.getElementById("revealAllBtn").addEventListener("click", () => {
-        constellationData.forEach((_, i) => discovered.add(i));
-        discoveredCount.textContent = `10 / 10`;
-        const centerPos = getStarScreenPos(0);
-        createBurst(centerPos.x, centerPos.y);
-    });
+    reopenEnvelopeBtn.addEventListener("click", openEnvelopeWithLetter);
 
-    toggleHudBtn.addEventListener("click", () => {
-        const isMin = floatingHud.classList.toggle("minimized");
-        toggleHudBtn.textContent = isMin ? "+" : "−";
-    });
-
-    window.addEventListener("resize", () => {
-        width = canvas.width = window.innerWidth;
-        height = canvas.height = window.innerHeight;
-        initSky();
-    });
-
+    window.addEventListener("resize", initSky);
     initSky();
-    renderSky();
+    requestAnimationFrame(renderSky);
 
     /* =====================================================================
-        4. REPRODUCTOR DUAL (AUTO-INICIO EN SEGUNDO 20 + CONTINUIDAD)
-        ===================================================================== */
+       2. REPRODUCTOR DUAL (AUTO-INICIO EN SEGUNDO 20 + CONTINUIDAD)
+       ===================================================================== */
     const playlist = [
         { title: "Perfect — Ed Sheeran", src: "audio/perfect.mp3", startAt: 20 },
         { title: "Te Amo y Más — Libro de la Vida", src: "audio/te-amo-mas.mp3", startAt: 0 }
@@ -1151,23 +647,18 @@
 
     let currentTrack = Number(sessionStorage.getItem("nh_track") || 0);
     let savedTime = Number(sessionStorage.getItem("nh_time") || 0);
-    let isPlaying = false;
-    let loadedTrackIndex = -1;
+    let isPlaying = false, loadedTrackIndex = -1;
 
     const bgAudio = document.getElementById("bgAudio");
     const audioToggle = document.getElementById("audioToggle");
     const songSwitchBtn = document.getElementById("songSwitchBtn");
     const audioIcon = document.getElementById("audioIcon");
     const songTitleLabel = document.getElementById("songTitleLabel");
-
     songTitleLabel.textContent = playlist[currentTrack].title;
 
-    // Evita que al repetirse en bucle vuelva a pasar por los 20s vacíos
     bgAudio.addEventListener("timeupdate", () => {
         const track = playlist[currentTrack];
-        if (track && track.startAt > 0 && bgAudio.currentTime < track.startAt - 0.5) {
-            bgAudio.currentTime = track.startAt;
-        }
+        if (track && track.startAt > 0 && bgAudio.currentTime < track.startAt - 0.5) bgAudio.currentTime = track.startAt;
         if (isPlaying) {
             sessionStorage.setItem("nh_track", String(currentTrack));
             sessionStorage.setItem("nh_time", String(bgAudio.currentTime));
@@ -1177,60 +668,34 @@
     function startMusic(forceRestart = false) {
         const track = playlist[currentTrack];
         const minStart = track.startAt || 0;
-        const targetTime = forceRestart
-            ? minStart
-            : Math.max(minStart, savedTime || bgAudio.currentTime || 0);
-
+        const targetTime = forceRestart ? minStart : Math.max(minStart, savedTime || bgAudio.currentTime || 0);
         songTitleLabel.textContent = track.title;
 
         if (loadedTrackIndex !== currentTrack) {
-            bgAudio.src = track.src;
-            bgAudio.loop = true;
-            bgAudio.volume = 0.7;
-            bgAudio.load();
-            loadedTrackIndex = currentTrack;
+            bgAudio.src = track.src; bgAudio.loop = true; bgAudio.volume = 0.7; bgAudio.load(); loadedTrackIndex = currentTrack;
         }
 
         const playNow = () => {
             savedTime = 0;
-            bgAudio.play()
-                .then(() => {
-                    isPlaying = true;
-                    audioIcon.textContent = "✨";
-                })
-                .catch(() => {
-                    // Si el navegador del celular exige un toque, arranca al tocar cualquier estrella
-                    isPlaying = false;
-                    audioIcon.textContent = "🎵";
-                    const resumeOnTouch = () => {
-                        if (!isPlaying) startMusic(false);
-                    };
-                    window.addEventListener("pointerdown", resumeOnTouch, { once: true });
-                    window.addEventListener("keydown", resumeOnTouch, { once: true });
-                });
+            bgAudio.play().then(() => { isPlaying = true; audioIcon.textContent = "✨"; }).catch(() => {
+                isPlaying = false; audioIcon.textContent = "🎵";
+                const resumeOnTouch = () => { if (!isPlaying) startMusic(false); };
+                window.addEventListener("pointerdown", resumeOnTouch, { once: true });
+                window.addEventListener("keydown", resumeOnTouch, { once: true });
+            });
         };
 
         if (targetTime > 0 && Math.abs(bgAudio.currentTime - targetTime) > 0.6) {
-            const setOffset = () => {
-                bgAudio.addEventListener("seeked", playNow, { once: true });
-                bgAudio.currentTime = targetTime;
-            };
+            const setOffset = () => { bgAudio.addEventListener("seeked", playNow, { once: true }); bgAudio.currentTime = targetTime; };
             if (bgAudio.readyState >= 1) setOffset();
             else bgAudio.addEventListener("loadedmetadata", setOffset, { once: true });
-        } else {
-            playNow();
-        }
+        } else playNow();
     }
 
     audioToggle.addEventListener("click", (e) => {
         e.stopPropagation();
-        if (!isPlaying) {
-            startMusic(false);
-        } else {
-            isPlaying = false;
-            bgAudio.pause();
-            audioIcon.textContent = "🎵";
-        }
+        if (!isPlaying) startMusic(false);
+        else { isPlaying = false; bgAudio.pause(); audioIcon.textContent = "🎵"; }
     });
 
     songSwitchBtn.addEventListener("click", (e) => {
@@ -1241,7 +706,11 @@
         if (isPlaying) startMusic(true);
     });
 
-    // Inicia automáticamente al entrar a las constelaciones
+    document.getElementById("backLink").addEventListener("click", () => {
+        sessionStorage.setItem("nh_track", String(currentTrack));
+        sessionStorage.setItem("nh_time", String(bgAudio.currentTime || 20));
+    });
+
     startMusic(false);
 </script>
 </body>
